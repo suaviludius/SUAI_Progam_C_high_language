@@ -1,0 +1,199 @@
+#include<cstdio>
+#include<string>
+#include<clocale>
+#include <iostream>
+#include <cstdlib>
+#include<Windows.h>
+#include <sstream>
+#include <iostream>
+#include <iomanip>
+#define N 2
+
+using namespace std;
+
+class Student* st;
+
+class Student
+{
+private:
+	char surname[25];//Поле структуры, которое хранит фамилию.
+	char name[25];//Поле структуры, которое хранит имя.
+	char patronymic[25];//Поле структуры, которое хранит отчество.
+	int zcNum; //Поле структуры, которое хранит номер зачетной книжки.
+	char discipline[N][50]; //Поле структуры, которое хранит название дисциплины.
+	char dateMark[N][25]; //Поле структуры, которое хранит дату получения оценки.
+	int*  mark = new int[N]; //Поле структуры , которое хранит оценку.
+	char teachSurname[N][25]; //Поле структуры, которое хранит фамилию преподавателя.
+public:
+
+	//const char* discLine[N] = { "Математика", "Физика", "Русский", "Философия", "Алгебра", "Английский", "Информатика"};
+	const char* discLine[N] = { "Математика", "Физика"};
+
+	//Student()
+	//{
+	//}
+
+	void get(int num)
+	{
+		if (num == 0)
+		{
+			cout << "Фамилия: " << surname << endl;
+			cout << "Имя: " << name << endl;
+			cout << "Отчество: " << patronymic << endl;
+			cout << "Номер зачетной книжки: " << zcNum << endl;
+		}
+		cout << "Название дисциплины: " << discipline[num] << endl;
+		cout << "Дата получения оценки (dd.mm.yyyy): " << dateMark[num] << endl;
+		cout << "Оценка: " << mark[num] << endl;
+		cout << "Фамилия преподавателя: " << teachSurname[num] << endl;
+		cout << "<-----------================================----------->" << endl;
+	}
+	void set(int* numDisc, int i)
+	{
+		int sdacha  = 0; // добавление результата 
+		int num = 0; // номер экзамена
+
+		cout << "Введите фамилию: ";
+		cin >> surname;
+		cout << "Введите имя: ";
+		cin >> name;
+		cout << "Введите отчество: ";
+		cin >> patronymic;
+		cout << "Введите номер зачетной книжки: ";
+		cin >> zcNum;
+		do {
+			cout << "Введите (1), для добавления результата: ";
+			cin >> sdacha;
+			if (sdacha == 1) {
+				cout << "Введите название дисциплины: ";
+				cin.get();
+				cin.getline(discipline[num], 50);
+				cout << "Введите дату получения оценки (dd.mm.yyyy): ";
+				cin.getline(dateMark[num], 25);
+				cout << "Введите оценку: ";
+				cin >> mark[num];
+				cout << "Фамилию преподавателя: ";
+				cin.get();
+				cin.getline(teachSurname[num], 25);
+				num++;
+			}
+		} while (sdacha == 1 && num <= N - 1);
+
+		numDisc[i] = num - 1;
+	}
+	void show(int* numDisc, int n)
+	{
+		int number;
+		int maxMark;
+
+		cout << "(1) - список студентов с долгами" << endl; //долг это "оценка не стоит"
+		cout << "(2) - списки студентов с наибольшим баллом" << endl;
+		cout << "(3) - список сданных экзаменов и фамилии студента и преподавателя" << endl;
+		cin >> number;
+		switch (number)
+		{
+		case 1:
+			cout << "<================================>" << endl;
+			for (int i = 0; i < n; i++)
+			{
+				if (numDisc[i] < N - 1)
+				{
+					//cout.width(7);
+					cout  << st[i].surname  << "\n" << st[i].name << "\n" <<  st[i].patronymic << "\n" << endl;
+					cout << "----------------------------------" << endl;
+				}
+			}
+			break;
+		case 2:
+			cout << "<================================>" << endl;
+			maxMark = 0;
+			for (int num = 0; num < N; num++)
+			{
+				for (int i = 0; i < n; i++)
+				{
+					for (int t = 0; t < numDisc[i] + 1; t++)
+					{
+						if (!(strcmp(st[i].discipline[t], discLine[num])))
+							if (st[i].mark[t] > maxMark)
+							{
+								maxMark = st[i].mark[t];
+								break;
+							}
+					}
+				}
+
+				cout << "По предмету \"" << discLine[num] << "\" с наибольшим баллом: " << maxMark <<  endl;
+
+				for (int i = 0; i < n; i++)
+				{
+					for (int t = 0; t < numDisc[i] + 1; t++)
+					{
+						if (!(strcmp(st[i].discipline[t], discLine[num])))
+							if (st[i].mark[t] == maxMark)
+							{
+								cout << "\n" << st[i].surname << endl;
+								cout << st[i].name << endl;
+								cout << st[i].patronymic << endl;
+								cout << "----------------------------------" << endl;
+								break;
+							}
+					}
+				}
+				maxMark = 0;
+			}
+			break;
+		case 3:
+			cout << "<================================>" << endl;
+			for (int num = 0; num < N; num++)
+			{
+				cout <<"Экзамен \""<< discLine[num] << '\"' << endl;
+
+				for (int i = 0; i < n; i++)
+				{
+					for (int t = 0; t < numDisc[i] + 1; t++)
+					{
+						if (!(strcmp(st[i].discipline[t], discLine[num])))
+							{
+								cout <<"Преподаватель: "<< st[i].surname << "\n" << "Студент: " <<st[i].teachSurname[t] << "\n" << endl;
+								break;
+							}
+					}
+				}
+				cout << "----------------------------------" << endl;
+			}
+			break;
+		}
+	}
+};
+
+int main()
+{
+	setlocale(LC_ALL, "Russian");
+	SetConsoleCP(1251);
+	SetConsoleOutputCP(1251);
+	int num;
+	int n = 0;
+
+	cout << "Введите количество студентов: ";
+	cin >> n;
+	st = new Student[n];
+	int* numDisc = new int[n];
+
+	for (int i = 0; i < n; i++)
+	{
+		st[i].set(numDisc,i);
+		cout << "<================================>" << endl;
+	}
+	do
+	{
+		cout << "1 - вывести списки, 0 - нет" << endl;
+		cin >> num;
+		if (num == 1)
+		{
+			st->show(numDisc, n);
+		}
+	} while (num != 0);
+
+	delete[]st;
+	return 0;
+}
