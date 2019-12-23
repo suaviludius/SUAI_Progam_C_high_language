@@ -1,0 +1,145 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include <stdio.h>
+#include <stdlib.h>
+#include <cstdlib> // содержит srand() и rand()
+#include <ctime>
+#include <iostream>
+#define SIZE 6
+using namespace std;
+int main()
+{
+int** a = new int*[SIZE];// матрица связей
+for (int i = 0; i < SIZE; i++)
+{
+a[i] = new int[SIZE];
+}
+
+int* d = new int[SIZE]; // минимальное расстояние
+int* v = new int[SIZE]; // посещенные вершины
+int temp, minindex, min;
+int N = 0; //вершина
+system("chcp 1251");
+system("cls");
+srand(time(0));
+
+// Инициализация матрицы связей
+cout « "Ввод расстояний:" « endl;
+for (int i = 0; i < SIZE; i++)
+{
+a[i][i]= 0;
+for (int j = i + 1; j < SIZE; j++) {
+a[i][j] = rand() % 7;
+a[j][i] = a[i][j];
+}
+}
+// Вывод матрицы связей
+for (int i = 0; i < SIZE; i++)
+{
+for (int j = 0; j < SIZE; j++)
+{
+cout.width(4);
+cout « a[i][j];
+}
+cout « endl;
+}
+cout « "Введите вершину :" « endl;
+cout « " ";
+cin » N;
+
+//Инициализация вершин и расстояний
+for (int i = 0; i < SIZE; i++)
+{
+d[i] = 10000;
+v[i] = 1;
+}
+d[N-1] = 0; // start
+
+// Шаг алгоритма
+do {
+minindex = 10000;
+min = 10000;
+for (int i = 0; i < N; i++) // до заданного пункта
+{ // Если вершину ещё не обошли и вес меньше min
+if ((v[i] == 1) && (d[i] < min))
+{ // Переприсваиваем значения
+min = d[i];
+minindex = i;
+}
+}
+for (int i = N - 1; i < SIZE; i++) // после заданного пункта
+{
+if ((v[i] == 1) && (d[i] < min))
+{ // Переприсваиваем значения
+min = d[i];
+minindex = i;
+}
+}
+// Добавляем найденный минимальный вес
+// к текущему весу вершины
+// и сравниваем с текущим минимальным весом вершины
+if (minindex != 10000)
+{
+for (int i = 0; i < SIZE; i++)
+{
+if (a[minindex][i] > 0)
+{
+temp = min + a[minindex][i];
+if (temp < d[i])
+{
+d[i] = temp;
+}
+}
+}
+v[minindex] = 0;
+}
+} while (minindex < 10000);
+// Вывод кратчайших расстояний до вершин
+cout « "Кратчайшие расстояния до вершин:" « endl;
+for (int i = 0; i < SIZE; i++)
+{
+cout.width(4);
+cout « d[i];
+}
+
+// Восстановление пути
+int* ver = new int[SIZE]; // массив посещенных вершин
+for (int lol = 0; lol < SIZE; lol++) {//
+int end = lol;// индекс конечной вершины = end
+ver[0] = end + 1; // начальный элемент - конечная вершина
+int k = 1; // индекс предыдущей вершины
+int weight = d[end]; // вес конечной вершины
+
+while (end != N - 1) // пока не дошли до начальной вершины
+{
+for (int i = 0; i < SIZE; i++) // просматриваем все вершины
+if (a[end][i] != 0) // если связь есть
+{
+int temp = weight - a[end][i]; // определяем вес пути из предыдущей вершины
+if (temp == d[i]) // если вес совпал с рассчитанным
+{ // значит из этой вершины и был переход
+weight = temp; // сохраняем новый вес
+end = i; // сохраняем предыдущую вершину
+ver[k] = i + 1; // и записываем ее в массив
+k++;
+}
+}
+}
+cout « endl;
+// Вывод пути (начальная вершина оказалась в конце массива из k элементов)
+cout « "Вывод кратчайшего пути вершины " « lol+1 « endl;
+for (int i = k - 1; i >= 0; i--)
+{
+cout.width(4);
+cout « ver[i];
+}
+}
+
+for (int i = 0; i < SIZE; i++)
+{
+delete[] a[i];
+}
+delete[] d;
+delete[] v;
+delete[] ver;
+return 0;
+}
