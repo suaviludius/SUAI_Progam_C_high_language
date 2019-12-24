@@ -4,9 +4,6 @@
 #include <iostream>
 #include <cstdlib>
 #include<Windows.h>
-#include <sstream>
-#include <iostream>
-#include <iomanip>
 #define N 2
 
 using namespace std;
@@ -16,22 +13,21 @@ class Student* st;
 class Student
 {
 private:
-	char surname[25];//Поле структуры, которое хранит фамилию.
-	char name[25];//Поле структуры, которое хранит имя.
-	char patronymic[25];//Поле структуры, которое хранит отчество.
-	int zcNum; //Поле структуры, которое хранит номер зачетной книжки.
-	char discipline[N][50]; //Поле структуры, которое хранит название дисциплины.
-	char dateMark[N][25]; //Поле структуры, которое хранит дату получения оценки.
-	int*  mark = new int[N]; //Поле структуры , которое хранит оценку.
-	char teachSurname[N][25]; //Поле структуры, которое хранит фамилию преподавателя.
+	char* surname = new char[25];//Поле класса, которое хранит фамилию.
+	char* name = new char[25];//Поле , которое хранит имя.
+	char* patronymic = new char[25];//Поле, которое хранит отчество.
+	int zcNum; //Поле, которое хранит номер зачетной книжки.
+	char** discipline = new char* [N];//Поле, которое хранит название дисциплины.
+	int*  mark = new int[N]; //Поле , которое хранит оценку.
+	char** teachSurname = new char* [N]; //Поле, которое хранит фамилию преподавателя.
+	int day = 0; //Поле, которое хранит дату получения оценки.
+	int month = 0;
+	int year = 0;
+
 public:
 
 	//const char* discLine[N] = { "Математика", "Физика", "Русский", "Философия", "Алгебра", "Английский", "Информатика"};
 	const char* discLine[N] = { "Математика", "Физика"};
-
-	//Student()
-	//{
-	//}
 
 	void get(int num)
 	{
@@ -43,15 +39,21 @@ public:
 			cout << "Номер зачетной книжки: " << zcNum << endl;
 		}
 		cout << "Название дисциплины: " << discipline[num] << endl;
-		cout << "Дата получения оценки (dd.mm.yyyy): " << dateMark[num] << endl;
+		cout << "Дата получения оценки (dd.mm.yyyy): " << day << "." << month << "." << year << endl;
 		cout << "Оценка: " << mark[num] << endl;
 		cout << "Фамилия преподавателя: " << teachSurname[num] << endl;
 		cout << "<-----------================================----------->" << endl;
 	}
 	void set(int* numDisc, int i)
 	{
+		for (int count = 0; count < N; count++)
+		{
+			discipline[count] = new char[50];
+			teachSurname[count] = new char[50];
+		}
 		int sdacha  = 0; // добавление результата 
 		int num = 0; // номер экзамена
+		int u = 0;
 
 		cout << "Введите фамилию: ";
 		cin >> surname;
@@ -68,8 +70,13 @@ public:
 				cout << "Введите название дисциплины: ";
 				cin.get();
 				cin.getline(discipline[num], 50);
-				cout << "Введите дату получения оценки (dd.mm.yyyy): ";
-				cin.getline(dateMark[num], 25);
+				cout << "Введите дату получения оценки" << endl;
+				cout << "День: ";
+				cin >> day;
+				cout << "Месяц: ";
+				cin >> month;
+				cout << "Год: ";
+				cin >> year;
 				cout << "Введите оценку: ";
 				cin >> mark[num];
 				cout << "Фамилию преподавателя: ";
@@ -106,7 +113,7 @@ public:
 			break;
 		case 2:
 			cout << "<================================>" << endl;
-			maxMark = 0;
+			maxMark = -1;
 			for (int num = 0; num < N; num++)
 			{
 				for (int i = 0; i < n; i++)
@@ -122,7 +129,7 @@ public:
 					}
 				}
 
-				cout << "По предмету \"" << discLine[num] << "\" с наибольшим баллом: " << maxMark <<  endl;
+				if(maxMark != -1)cout << "По предмету \"" << discLine[num] << "\" с наибольшим баллом: " << maxMark <<  endl;
 
 				for (int i = 0; i < n; i++)
 				{
@@ -147,7 +154,6 @@ public:
 			for (int num = 0; num < N; num++)
 			{
 				cout <<"Экзамен \""<< discLine[num] << '\"' << endl;
-
 				for (int i = 0; i < n; i++)
 				{
 					for (int t = 0; t < numDisc[i] + 1; t++)
@@ -186,7 +192,7 @@ int main()
 	}
 	do
 	{
-		cout << "1 - вывести списки, 0 - нет" << endl;
+		cout << "1 - вывести списки, 0 - нет" << "\n" << "Выбор позиции: ";
 		cin >> num;
 		if (num == 1)
 		{
